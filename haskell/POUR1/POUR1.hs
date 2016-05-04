@@ -23,4 +23,4 @@ pour1 ca cb c
 main :: IO ()
 main = getContents >>= putStrLn . (intercalate "\n") . (map $ show . pourl) . (chunksOf 3) . (map readInt) . tail . lines
   where pourl (a:b:c:_) = pour1 a b c
-  
+
