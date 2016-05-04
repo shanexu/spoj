@@ -1,3 +1,5 @@
+import Data.List (intercalate)
+
 zero :: Int -> Int
 zero 0 = 0
 zero n = zero' n 0
@@ -10,4 +12,4 @@ readInt :: String -> Int
 readInt = read
 
 main :: IO ()
-main = mapM_ (print . zero . readInt) . tail . lines =<< getContents
+main = putStrLn . (intercalate "\n") . (map (show . zero . readInt)) . tail . lines =<< getContents
