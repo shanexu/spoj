@@ -14,4 +14,4 @@ main :: IO ()
 main = getContents >>= putStrLn . (intercalate "\n") . results . tail . lines
   where pirl (a:b:c:d:e:f:_) = pir a b c d e f
         results = map (format . pirl . (map readDouble) . words)
-        format d = printf "%0.4f" d
+        format = printf "%0.4f"
