@@ -1,0 +1,17 @@
+2 
+11
+ADD:marsz
+ADD:marsz
+ADD:Dabrowski
+ADD:z
+ADD:ziemii
+ADD:wloskiej
+ADD:do
+ADD:Polski
+DEL:od
+DEL:do
+DEL:wloskiej
+3
+ADD:aac
+ADD:aace
+DEL:aac
