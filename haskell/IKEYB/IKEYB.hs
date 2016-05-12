@@ -1,3 +1,6 @@
+{-# LANGUAGE BangPatterns #-}
+{-# OPTIONS_GHC -optc-O2 #-}
+
 import Control.Monad.ST
 import Control.Monad (when)
 import Data.Array.ST
@@ -33,8 +36,8 @@ ikeyb keys letters frequencies =
   let keysLength = length $ elems keys
       lettersLength = length $ elems letters
       solutions = runST $ do
-        bestPrices <- newArray ((0, 0), (keysLength - 1, lettersLength - 1)) maxBound :: ST s (STArray s (Int, Int) Int)
-        solution <- newArray ((0, 0), (keysLength - 1, lettersLength - 1)) (-1) :: ST s (STArray s (Int, Int) Int)
+        bestPrices <- newArray ((0, 0), (keysLength - 1, lettersLength - 1)) maxBound :: ST s (STUArray s (Int, Int) Int)
+        solution <- newArray ((0, 0), (keysLength - 1, lettersLength - 1)) (-1) :: ST s (STUArray s (Int, Int) Int)
 
         for_ ((,) <$> [0 .. keysLength - 1] <*> [0 .. lettersLength - 1]) $ \(i, j) ->
           if i == 0
@@ -59,7 +62,7 @@ ikeyb keys letters frequencies =
                                      \bp -> when(possibleSolution < bp) $
                                      writeArray bestPrices (i,k) possibleSolution >>
                                      writeArray solution (i,k) (j+1)
-        (listArray ((0,0), (keysLength-1, lettersLength-1))) <$> getElems solution
+        listArray ((0,0), (keysLength-1, lettersLength-1)) <$> getElems solution
       printSolutions :: Int -> Int -> WriterT String Maybe ()
       printSolutions k l
         | k < 0 = tell ""
