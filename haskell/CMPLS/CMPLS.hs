@@ -5,15 +5,15 @@ import Control.Monad
 series :: [Int] -> [Int]
 series (x:xs) = go xs (repeat x)
   where go [] s = s
-        go (y:ys) s = let s' = y : zipWith (+) (tail s) s'
-                      in go ys s'
+        go (y:ys) s = let s1 = y : zipWith (+) (tail s) s1
+                      in go ys s1
 
 seeds :: [Int] -> [Int]
 seeds xs = go xs []
   where
-    go ys@(y:ys') ss = if all (==y) ys'
+    go ys@(y:ys1) ss = if all (==y) ys1
                        then y : ss
-                       else go (zipWith (-) ys' ys) (last ys' : ss)
+                       else go (zipWith (-) ys1 ys) (last ys1 : ss)
 
 cmpls :: Int -> [Int] -> [Int]
 cmpls n = take n . tail . series . seeds
