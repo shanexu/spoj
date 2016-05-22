@@ -4,7 +4,7 @@
 import Data.Array.ST
 import Data.Array
 import Control.Monad.ST
-import Control.Monad (foldM, liftM, ap, when, forM_, liftM2, liftM)
+import Control.Monad (foldM, liftM, ap, when, forM_, liftM)
 import qualified Data.Map as M
 
 data Heap s = Heap { _capacity :: Int
