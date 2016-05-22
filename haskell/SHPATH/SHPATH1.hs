@@ -4,7 +4,7 @@
 import Data.Array.ST
 import Data.Array
 import Control.Monad.ST
-import Control.Monad (foldM, liftM, ap, when, forM_)
+import Control.Monad (foldM, liftM, ap, when, forM_, liftM2, liftM)
 import qualified Data.Map as M
 
 data Heap s = Heap { _capacity :: Int
@@ -16,9 +16,9 @@ data Heap s = Heap { _capacity :: Int
 
 struct :: Heap s -> ST s ([(Int, Int)], [(Int, Int)])
 struct (Heap c s ps vs is) =
-  return (,)
-  `ap` foldM (\r k -> return (\p v -> r ++ [(p, v)]) `ap` readArray ps k `ap` readArray vs k) [] [1 .. s]
-  `ap` foldM (\r k -> (\i -> r ++ [(k, i)]) `fmap` readArray is k) [] [1 .. c]
+  (,) `liftM` foldM (\r k -> (\p v -> r ++ [(p, v)]) `liftM` readArray ps k
+                                                        `ap` readArray vs k) [] [1 .. s]
+         `ap` foldM (\r k -> (\i -> r ++ [(k, i)]) `fmap` readArray is k) [] [1 .. c]
 
 fromList :: [(Int, Int)] -> ST s (Heap s)
 fromList pvs = do
