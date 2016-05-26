@@ -13,8 +13,7 @@ powerLen = 9
 split :: Int64 -> BigNumber
 split 0 = []
 split n = r : split q
-  where q = n `div` power
-        r = n - power * q
+  where (q, r) = n `quotRem` power
 
 (|+|) :: BigNumber -> BigNumber -> BigNumber
 [] |+| ys = ys
