@@ -13,7 +13,7 @@ solve (a, ga, gb, gc) = let b = a * ga / gb
                         in (s, hg)
 
 format :: (Double, Double) -> String
-format (s, hg) = printf "%.3f %.3f " s hg
+format (s, hg) = printf "%.3f %.3f" s hg
 
 main :: IO ()
 main = interact $ unlines . map (format . solve . problem) . tail . lines
