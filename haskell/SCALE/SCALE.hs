@@ -19,4 +19,4 @@ format (Just (l , r)) =  f l ++ "\n" ++ f r
   where f = unwords . map show. reverse
 
 main :: IO ()
-main = interact(format . uncurry solve . problem . words . head . lines)
+main = interact $ format . uncurry solve . problem . words . head . lines
