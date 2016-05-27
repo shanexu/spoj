@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -optc-O2 #-}
+
 problem :: String -> ([Int], [Int])
 problem = splitAt 4 . map read . words
 
