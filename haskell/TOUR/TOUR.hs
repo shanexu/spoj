@@ -4,33 +4,32 @@
 import Data.Array
 import Data.Array.ST
 import Control.Monad.ST
-import Control.Monad(forM_)
-import Data.List(foldl')
+import Control.Monad(forM_, foldM, unless)
 import qualified Data.ByteString.Lazy.Char8 as L
 import Data.Maybe
 
-select :: a -> a -> Bool -> a
-select a1 a2 b = if b then a1 else a2
+solves :: [Array Int [Int]] -> [Int]
+solves ps = runST $ do
+  mem <- newArray ((1,1), (1000,1000)) False :: ST s (STUArray s (Int, Int) Bool)
+  solves' ps mem []
+  where solves' [] _ rs = return rs
+        solves' (x:xs) mem rs = ((:rs) `fmap` solve x mem) >>= solves' xs mem
 
-check :: Array Int [Int] -> Int -> Bool
-check edges no = runST $ do
-  mem <- newArray (bounds edges) False :: ST s (STUArray s Int Bool)
+solve :: Array Int [Int] -> STUArray s (Int, Int) Bool -> ST s Int
+solve edges mem = do
   let m = snd . bounds $ edges
-      go step [] = return step
-      go step (u:us)
-        | step == m = return step
-        | otherwise = readArray mem u >>= select (go step us) (writeArray mem u True >> go (step+1) (foldl' (flip(:)) us (edges ! u)))
-  (==m) `fmap` go 0 [no]
+  forM_ [(i, j) | i <- [1..m], j <-[1..m]] (\idx -> writeArray mem idx False)
+  forM_ [1..m] (\u -> travel u [u] edges mem)
+  foldM (\count u -> (\tour -> if tour then count + 1 else count) `fmap` checkOne u m mem) 0 [1..m]
 
-checkAll :: Array Int [Int] -> Int
-checkAll edges = runST $ do
-  let m = snd . bounds $ edges
-  mem <- newArray ((1,1), (m,m)) False :: ST s (STUArray s (Int, Int) Bool)
-  vis <- newArray (1,m) False :: ST s (STUArray s Int Bool)
-  undefined
+checkOne :: Int -> Int -> STUArray s (Int, Int) Bool -> ST s Bool
+checkOne _ 0 _ = return True
+checkOne source target mem = readArray mem (source, target) >>= \hasPath -> if hasPath then checkOne source (target-1) mem else return False
 
-solve :: Array Int [Int] -> Int
-solve edges = length $ filter (check edges) (indices edges)
+travel :: Int -> [Int] -> Array Int [Int] -> STUArray s (Int, Int) Bool -> ST s ()
+travel target previous edges mem = do
+  previous' <- foldM (\ps p -> readArray mem (p, target) >>= \vd -> if vd then return ps else writeArray mem (p, target) True >> return (p:ps)) [] previous
+  unless (null previous') $ forM_ (edges ! target) (\u -> travel u (target : previous') edges mem)
 
 readInt :: L.ByteString -> Int
 readInt = fst . fromJust . L.readInt
@@ -54,4 +53,4 @@ main = do
   ss <- L.getContents
   let (l, ss') = L.break (=='\n') ss
       ps = fst $ problems (readInt l) ([], ss')
-  putStr . unlines $ foldl' (\rs p -> (show.solve $ p):rs) [] ps
+  putStr . unlines $ map show $ solves ps
