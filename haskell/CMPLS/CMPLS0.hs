@@ -8,7 +8,9 @@ series (x:xs) = let s = x : zipWith (+) (tail (series xs)) s in s
 
 seeds :: [Int] -> [Int]
 seeds [] = []
-seeds xs = last xs : seeds (zipWith (-) (tail xs) xs)
+seeds xs@(x:xs') = if all (==x) xs'
+                   then [x]
+                   else last xs : seeds (zipWith (-) (tail xs) xs)
 
 cmpls :: Int -> [Int] -> [Int]
 cmpls n = take n . tail . series . seeds
