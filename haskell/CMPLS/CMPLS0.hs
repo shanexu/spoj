@@ -3,11 +3,11 @@
 import Control.Monad
 
 series :: [Int] -> [Int]
-series [] = repeat 0
-series (x:xs) = let s = x : zipWith (+) (tail (series xs)) s in s
+series [x] = let s = x : s in s
+series (x:xs) = let s = x : zipWith (+) (tail . series $ xs) s in s
 
 seeds :: [Int] -> [Int]
-seeds [] = []
+seeds [x] = [x]
 seeds xs@(x:xs') = if all (==x) xs'
                    then [x]
                    else last xs : seeds (zipWith (-) (tail xs) xs)
