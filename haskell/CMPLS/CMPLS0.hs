@@ -19,7 +19,8 @@ solveProblems :: [String] -> IO ()
 solveProblems = foldM_ f 0
   where f 0 l = let [_, n] = map read . words $ l
                 in return n
-        f n l = putStrLn (unwords . map show $ cmpls n (map read . words $ l)) >> return 0
+        f n l = putStrLn (unwords . map show $ cmpls n (map read . words $ l))
+                >> return 0
 
 main :: IO ()
 main = getContents >>= solveProblems . tail . lines
